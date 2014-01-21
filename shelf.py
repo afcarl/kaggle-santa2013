@@ -54,18 +54,24 @@ class Shelf():
         Given the current remaining list of presents, fill the shelf
         """
         i = 0
+        invert = False
         for i, p in enumerate(presents):
             #print i + offset, self.sleigh.cursor
             if p[0] in skip:
                 continue
 
-            ok = self.add(p)
+
+            ok = self.fill_ordered(p, invert=invert)
 
             if ok:
-                self.presents.append(self.sleigh.presents[self.sleigh.cursor-1])
-                self.x += p[1]
-                if self.z + p[3] > self.zmax:
-                    self.zmax = self.z + p[3]
+                continue
+            elif self.y + p[2] -1 > 1000:
+                invert = True
+                self.y = 1000
+                self.x = 1000
+                ok = self.fill_ordered(p, invert=invert)
+                if not ok:
+                    break
             else:
                 self.fill_up(presents, i, offset, skip)
                 self.fill_right(presents, i, offset, skip)
@@ -74,6 +80,27 @@ class Shelf():
             if self.full:
                 break
         return i + offset, skip
+
+    def fill_ordered(self, p, invert=False):
+        ok = False
+        if invert:
+            ok = self.add(p, invert=True)
+            if ok:
+                #self.presents.append(self.sleigh.presents[self.sleigh.cursor-1])
+                self.x -= p[1]
+                if self.z + p[3] > self.zmax:
+                    self.zmax = self.z + p[3]
+        else:
+            ok = self.add(p)
+            if ok:
+                self.presents.append(self.sleigh.presents[self.sleigh.cursor-1])
+                self.x += p[1]
+                if self.z + p[3] > self.zmax:
+                    self.zmax = self.z + p[3]
+        return ok
+
+    def fill_ordered_bottomt(self):
+        pass
 
     def fill_up(self, presents, i, offset, skip):
         """
