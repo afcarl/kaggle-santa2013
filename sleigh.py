@@ -167,8 +167,6 @@ class Sleigh():
         Plot the 2d layout of the layer
         """
         img = np.zeros((1000, 1000))
-        color = 1
-        n_colors = 7
         pids = self.present_layers[layer]
         for i, pid in enumerate(pids):
             idx = np.where(self.present_ids == pid)[0][0]
@@ -177,9 +175,6 @@ class Sleigh():
             y = np.arange(p[0, 1]-1, p[1, 1], dtype=np.uint32)
             for j in y:
                 img[j, x] = p[1, 2]
-            color += 1
-            if color > n_colors:
-                color = 1
         plt.imshow(img, aspect='auto', interpolation='nearest',
                    origin='lower', cmap=plt.get_cmap('spectral'))
         #plt.colorbar()
